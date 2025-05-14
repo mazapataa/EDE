@@ -669,10 +669,10 @@ int background_w_fld(
                      double * integral_fld
                      ) {
 
+  double Omega_ede = 0.;
   double Omega_ede_a = 0.;
-  double dlogOmega_EDE_over_dloga = 0.;
-  double dOmega_EDE_over_da = 0.;
-  double d2Omega_EDE_over_da2 = 0.;
+  double dOmega_ede_over_da = 0.;
+  double d2Omega_ede_over_da2 = 0.;
   double a_eq, Omega_r, Omega_m;
 
   /** - first, define the function w(a) */
@@ -680,36 +680,21 @@ int background_w_fld(
   case CLP:
     *w_fld = pba->w0_fld + pba->wa_fld * (1. - a);
     break;
-  case nCPL: /*Modification: Add flag*/
-    *w_fld = pba->w0_fld + pba->wa_new * pow((1. -a), 7);  
+  case nCPL:
+    *w_fld = pba->w0_fld + pba->wa_new * pow((1. - a),7); /*Modification*/
     break;
+    
+    
   case EDE:
-    // pba->Omega_EDE(a) taken from eq. (10) in 1706.00730
-    Omega_ede_a = (pba->Omega0_fld - pba->Omega_EDE*(1.-pow(a,-3.*pba->w0_fld)))
+    // Omega_ede(a) taken from eq. (10) in 1706.00730
+     Omega_ede_a = (pba->Omega0_fld - pba->Omega_EDE*(1.-pow(a,-3.*pba->w0_fld)))
       /(pba->Omega0_fld+(pba->Omega0_m)*pow(a,3.*pba->w0_fld))
       + pba->Omega_EDE*(1.-pow(a,-3.*pba->w0_fld));
 
-    // Precompute frequently used exponents
-    double a_pow_3w0 = pow(a, 3.0 * pba->w0_fld);
-    double a_pow_minus_3w0 = pow(a, -3.0 * pba->w0_fld);
-    double a_pow_minus_3w0_minus_1 = pow(a, -3.0 * pba->w0_fld - 1.0);
-    double a_pow_3w0_minus_1 = pow(a, 3.0 * pba->w0_fld - 1.0);
-    double a_pow_minus_1 = 1.0 / a;
-
-    // Denominator and its squared value
-    double denom = pba->Omega0_fld + pba->Omega0_m * a_pow_3w0;
-    double denom_sq = denom * denom;
-
-    // Derivative computation
-    dOmega_EDE_over_da = 
-      (-3.0 * pba->w0_fld * pba->Omega0_fld * pba->Omega_EDE * a_pow_minus_3w0_minus_1
-       - 3.0 * pba->w0_fld * pba->Omega0_fld * pba->Omega0_m * a_pow_3w0_minus_1
-       + 3.0 * pba->w0_fld * pba->Omega_EDE * pba->Omega0_m * a_pow_3w0_minus_1
-       - 6.0 * pba->w0_fld * pba->Omega_EDE * pba->Omega0_m * a_pow_minus_1) 
-      / denom_sq
-      + 3.0 * pba->w0_fld * pba->Omega_EDE * a_pow_minus_3w0_minus_1;
-
-    dlogOmega_EDE_over_dloga = a * dOmega_EDE_over_da/Omega_ede_a;
+    // d Omega_ede / d a taken analytically from the above
+    dOmega_ede_over_da = - pba->Omega_EDE* 3.*pba->w0_fld*pow(a,-3.*pba->w0_fld-1.)/(pba->Omega0_fld+(1.-pba->Omega0_fld)*pow(a,3.*pba->w0_fld))
+      - (pba->Omega0_fld - pba->Omega_EDE*(1.-pow(a,-3.*pba->w0_fld)))*(1.-pba->Omega0_fld)*3.*pba->w0_fld*pow(a,3.*pba->w0_fld-1.)/pow(pba->Omega0_fld+(1.-pba->Omega0_fld)*pow(a,3.*pba->w0_fld),2)
+      + pba->Omega_EDE*3.*pba->w0_fld*pow(a,-3.*pba->w0_fld-1.);
 
     // find a_equality (needed because EDE tracks first radiation, then matter)
     Omega_r = pba->Omega0_g * (1. + 3.044 * 7./8.*pow(4./11.,4./3.)); // assumes LambdaCDM + eventually massive neutrinos so light that they are relativistic at equality; needs to be generalised later on.
@@ -721,7 +706,7 @@ int background_w_fld(
     a_eq = Omega_r/Omega_m; // assumes a flat universe with a=1 today
 
     // w_ede(a) taken from eq. (11) in 1706.00730
-    *w_fld = - (dlogOmega_EDE_over_dloga/(3.*(1-Omega_ede_a))) + (a_eq/(3*(a + a_eq))); 
+    *w_fld = - dOmega_ede_over_da*a/Omega_ede/3./(1.-Omega_ede)+a_eq/3./(a+a_eq);
     break;
   }
 
@@ -736,83 +721,13 @@ int background_w_fld(
     *dw_over_da_fld = - pba->wa_fld;
     break;
   case nCPL:
-    *dw_over_da_fld = - pba->wa_new*7*pow(1-a, 6);
-    break;  
-    
-    
+    *dw_over_da_fld = -2*pba->wa_new *pow((1-a),6);  /*MODIFICATION*/  
   case EDE:
-    // second derivative of Omega_ede_a
-
-    double w0 = pba->w0_fld;
-    double a_pow_3w0 = pow(a, 3.0 * w0);
-    double a_pow_minus_3w0 = pow(a, -3.0 * w0);
-    double a_pow_minus_3w0_minus_1 = pow(a, -3.0 * w0 - 1.0);
-    double a_pow_minus_3w0_minus_2 = pow(a, -3.0 * w0 - 2.0);
-    double a_pow_3w0_minus_1 = pow(a, 3.0 * w0 - 1.0);
-    double a_pow_3w0_minus_2 = pow(a, 3.0 * w0 - 2.0);
-    double a_pow_minus_2 = 1.0 / (a * a);
-
-    // Denominator terms
-    double denom = pba->Omega0_fld + pba->Omega0_m * a_pow_3w0;
-    double denom_sq = denom * denom;
-    double denom_cubed = denom_sq * denom;
-
-    // First term: Derivative of [A - B(1 - a^{-3w0})] / [A + C a^{3w0}]
-    // Let f(a) = A - B(1 - a^{-3w0}), g(a) = A + C a^{3w0}
-    // The second derivative of f(a)/g(a) is:
-    // [f''(a)g(a) - 2f'(a)g'(a) + 2f(a)g'(a)^2 / g(a) - f(a)g''(a)] / g(a)^2
-
-    // Compute f(a), f'(a), f''(a)
-    double f = pba->Omega0_fld - pba->Omega_EDE * (1.0 - a_pow_minus_3w0);
-    double f_prime = 3.0 * w0 * pba->Omega_EDE * a_pow_minus_3w0_minus_1;
-    double f_double_prime = -3.0 * w0 * (3.0 * w0 + 1.0) * pba->Omega_EDE * a_pow_minus_3w0_minus_2;
-
-    // Compute g(a), g'(a), g''(a)
-    double g = denom;
-    double g_prime = 3.0 * w0 * pba->Omega0_m * a_pow_3w0_minus_1;
-    double g_double_prime = 3.0 * w0 * (3.0 * w0 - 1.0) * pba->Omega0_m * a_pow_3w0_minus_2;
-
-    // Second derivative of the first term (f/g)
-    double d2_first_term = (
-        (f_double_prime * g - 2.0 * f_prime * g_prime + 2.0 * f * g_prime * g_prime / g - f * g_double_prime)
-    ) / denom_sq;
-
-    // Second term: Derivative of B(1 - a^{-3w0})
-    // Second derivative is: 3w0 (3w0 + 1) B a^{-3w0 - 2}
-    double d2_second_term = 3.0 * w0 * (3.0 * w0 + 1.0) * pba->Omega_EDE * a_pow_minus_3w0_minus_2;
-
-    // Total second derivative
-    d2Omega_EDE_over_da2 = 0; // d2_first_term + d2_second_term;
-       
-  
-
-
-
-
-
-    // Final second derivative
-     
-    //*dw_over_da_fld = - d2Omega_EDE_over_da2*a/3./(1.-Omega_ede_a)/pba->Omega_EDE
-    //  - dOmega_EDE_over_da/3./(1.-Omega_ede_a)/pba->Omega_EDE
-     // + dOmega_EDE_over_da*dOmega_EDE_over_da*a/3./(1.-Omega_ede_a)/(1.-Omega_ede_a)/pba->Omega_EDE
-     // + a_eq/3./(a+a_eq)/(a+a_eq);
-
-    *dw_over_da_fld = - (1.0 / 3.0) * (
-        ( dOmega_EDE_over_da + a * d2Omega_EDE_over_da2) * (1.0 - Omega_ede_a) 
-        + a *  dOmega_EDE_over_da * dOmega_EDE_over_da
-    ) / (Omega_ede_a * (1.0 - Omega_ede_a) * (1.0 - Omega_ede_a))
-    - a_eq / (3.0 * (a + a_eq) * (a + a_eq));
-     printf("ayuda3");
-     
-   // double term1_w = (dOmega_EDE_over_da + a*d2Omega_EDE_over_da2) *((1.-Omega_ede_a) * Omega_ede_a) 
-    //                 - (a*(pow(dOmega_EDE_over_da,2.0)) * (1.0-2.0*Omega_ede_a));
-
-    //double term2_w = 3.*pow(Omega_ede_a*(1.0-Omega_ede_a),2.0);
-    //double term3_w = a_eq/(3.*pow((a+a_eq),2.0));
-    //*dw_over_da_fld = -(term1_w/term2_w) - term3_w;
-     
-      
-   
+    d2Omega_ede_over_da2 = 0.;
+    *dw_over_da_fld = - d2Omega_ede_over_da2*a/3./(1.-Omega_ede)/Omega_ede
+      - dOmega_ede_over_da/3./(1.-Omega_ede)/Omega_ede
+      + dOmega_ede_over_da*dOmega_ede_over_da*a/3./(1.-Omega_ede)/(1.-Omega_ede)/Omega_ede
+      + a_eq/3./(a+a_eq)/(a+a_eq);
     break;
   }
 
@@ -830,15 +745,14 @@ int background_w_fld(
   case CLP:
     *integral_fld = 3.*((1.+pba->w0_fld+pba->wa_fld)*log(1./a) + pba->wa_fld*(a-1.));
     break;
-  case nCPL: /*Modification*/
-    *integral_fld = 3.*((1.+pba->w0_fld+pba->wa_new)*log(1./a) - pba->wa_new*(363.0/140.0 - 7.0*a + (21.0/2.0)*pow(a,2) - (35.0/3.0)*pow(a,3) + (35.0/4.0)*pow(a,4) - (21.0/5.0)*pow(a,5) + (7.0/6.0)*pow(a,6) - (1.0/7.0)*pow(a,7)));
-    break;  
+   
+  case nCPL:
+    *integral_fld = 3.*((1.+pba->w0_fld+pba->wa_new)*log(1./a) + pba->wa_new*(a-1.)); 
   case EDE:
     double term1_int = -3.0 * log(a);
     double term2_int = log((1.0 - pba->Omega0_fld) / (1.0 - Omega_ede_a));
     double term3_int = log((a + a_eq) / (a * (1.0 + a_eq)));
     *integral_fld= term1_int + term2_int + term3_int;
-
     break;
   }
 
@@ -1841,7 +1755,7 @@ int background_checks(
   int n_ncdm;
   double rho_ncdm_rel,rho_nu_rel;
   double N_dark;
-  double w_fld, dw_over_da, integral_fld;
+  double w_fld,dw_over_da, integral_fld;
   int filenum=0;
 
   /** - control that we have photons and baryons in the problem */
