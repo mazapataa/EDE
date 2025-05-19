@@ -686,22 +686,22 @@ int background_w_fld(
       + pba->Omega_EDE*(1.-pow(a,-3.*pba->w0_fld));
 
     // d Omega_ede / d a taken analytically from the above
-    //double denominator_1st = ((1.0 - pba->Omega0_fld) * pow(a, 3.0*pba->w0_fld)) + pba->Omega0_fld;
+    double denominator_1st = ((1.0 - pba->Omega0_fld) * pow(a, 3.0*pba->w0_fld)) + pba->Omega0_fld;
     // First term
-    //double term1_1st =  3.0 * pba->w0_fld * pba->Omega_EDE * pow(a, -1.0 - (3.0*pba->w0_fld) );
+    double term1_1st =  3.0 * pba->w0_fld * pba->Omega_EDE * pow(a, -1.0 - (3.0*pba->w0_fld) );
     // Second term
-    //double term2_1st = -3.0 * pba->w0_fld * pba->Omega_EDE * pow(a, -1.0 - (3.0*pba->w0_fld) ) / denominator_1st;
+    double term2_1st = -3.0 * pba->w0_fld * pba->Omega_EDE * pow(a, -1.0 - (3.0*pba->w0_fld) ) / denominator_1st;
     
     // Third term
-    //double term3_1st =  ( 3.0 * pba->w0_fld * (1.0 - pba->Omega0_fld) * pow(a, -1.0 + (3.0*pba->w0_fld) )
-    //                  * ( pba->Omega0_fld - ( pba->Omega_EDE*(1.0 - pow(a, -3.0*pba->w0_fld)) )  )  )  
-    //                  /  pow(denominator_1st, 2.0);
+    double term3_1st = (-3.0 * pba->w0_fld * (1.0 - pba->Omega0_fld) * pow(a, -1.0 + (3.0*pba->w0_fld) )
+                     * ( pba->Omega0_fld - ( pba->Omega_EDE*(1.0 - pow(a, -3.0*pba->w0_fld)) )  )  )  
+                       /  pow(denominator_1st, 2.0);
           
-    //dOmega_ede_over_da = term1_1st + term2_1st + term3_1st;
+    dOmega_ede_over_da = term1_1st + term2_1st + term3_1st;
     
-    dOmega_ede_over_da = - pba->Omega_EDE* 3.*pba->w0_fld*pow(a,-3.*pba->w0_fld-1.)/(pba->Omega0_fld+(1.-pba->Omega0_fld)*pow(a,3.*pba->w0_fld))
-      - (pba->Omega0_fld - pba->Omega_EDE*(1.-pow(a,-3.*pba->w0_fld)))*(1.-pba->Omega0_fld)*3.*pba->w0_fld*pow(a,3.*pba->w0_fld-1.)/pow(pba->Omega0_fld+(1.-pba->Omega0_fld)*pow(a,3.*pba->w0_fld),2)
-      + pba->Omega_EDE*3.*pba->w0_fld*pow(a,-3.*pba->w0_fld-1.);
+//    dOmega_ede_over_da = - pba->Omega_EDE* 3.*pba->w0_fld*pow(a,-3.*pba->w0_fld-1.)/(pba->Omega0_fld+(1.-pba->Omega0_fld)*pow(a,3.*pba->w0_fld))
+//      - (pba->Omega0_fld - pba->Omega_EDE*(1.-pow(a,-3.*pba->w0_fld)))*(1.-pba->Omega0_fld)*3.*pba->w0_fld*pow(a,3.*pba->w0_fld-1.)/pow(pba->Omega0_fld+(1.-pba->Omega0_fld)*pow(a,3.*pba->w0_fld),2)
+//      + pba->Omega_EDE*3.*pba->w0_fld*pow(a,-3.*pba->w0_fld-1.);
       
     // find a_equality (needed because EDE tracks first radiation, then matter)
     Omega_r = pba->Omega0_g * (1. + 3.044 * 7./8.*pow(4./11.,4./3.)); // assumes LambdaCDM + eventually massive neutrinos so light that they are relativistic at equality; needs to be generalised later on.
