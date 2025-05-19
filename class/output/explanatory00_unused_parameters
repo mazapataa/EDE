@@ -30,6 +30,7 @@ n_index_idm_g = 0
 use_ppf = yes
 c_gamma_over_c_fld = 0.4
 fluid_equation_of_state = CLP
+fluid_equation_of_state = nCPL
 scf_parameters = 10.0, 0.0, 0.0, 0.0, 100.0, 0.0
 attractor_ic_scf = yes
 scf_tuning_index = 0
