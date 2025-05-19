@@ -724,7 +724,9 @@ int background_w_fld(
     *dw_over_da_fld = - pba->wa_fld;
     break;
   case EDE:
-    d2Omega_ede_over_da2 = 0.;
+    // Total second derivative
+    d2Omega_ede_over_da2 = 0.0;
+    
     *dw_over_da_fld = - d2Omega_ede_over_da2*a/3./(1.-Omega_ede_a)/Omega_ede_a
       - dOmega_ede_over_da/3./(1.-Omega_ede_a)/Omega_ede_a
       + dOmega_ede_over_da*dOmega_ede_over_da*a/3./(1.-Omega_ede_a)/(1.-Omega_ede_a)/Omega_ede_a
