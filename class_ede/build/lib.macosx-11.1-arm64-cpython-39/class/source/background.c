@@ -724,50 +724,9 @@ int background_w_fld(
     *dw_over_da_fld = - pba->wa_fld;
     break;
   case EDE:
-
-    double w0 = pba->w0_fld;
-    double a_pow_3w0 = pow(a, 3.0 * w0);
-    double a_pow_minus_3w0 = pow(a, -3.0 * w0);
-    double a_pow_minus_3w0_minus_1 = pow(a, -3.0 * w0 - 1.0);
-    double a_pow_minus_3w0_minus_2 = pow(a, -3.0 * w0 - 2.0);
-    double a_pow_3w0_minus_1 = pow(a, 3.0 * w0 - 1.0);
-    double a_pow_3w0_minus_2 = pow(a, 3.0 * w0 - 2.0);
-    double a_pow_minus_2 = 1.0 / (a * a);
-
-    // Denominator terms
-    double denom = pba->Omega0_fld + pba->Omega0_m * a_pow_3w0;
-    double denom_sq = denom * denom;
-    double denom_cubed = denom_sq * denom;
-
-    // First term: Derivative of [A - B(1 - a^{-3w0})] / [A + C a^{3w0}]
-    // Let f(a) = A - B(1 - a^{-3w0}), g(a) = A + C a^{3w0}
-    // The second derivative of f(a)/g(a) is:
-    // [f''(a)g(a) - 2f'(a)g'(a) + 2f(a)g'(a)^2 / g(a) - f(a)g''(a)] / g(a)^2
-
-    // Compute f(a), f'(a), f''(a)
-    double f = pba->Omega0_fld - pba->Omega_EDE * (1.0 - a_pow_minus_3w0);
-    double f_prime = 3.0 * w0 * pba->Omega_EDE * a_pow_minus_3w0_minus_1;
-    double f_double_prime = -3.0 * w0 * (3.0 * w0 + 1.0) * pba->Omega_EDE * a_pow_minus_3w0_minus_2;
-
-    // Compute g(a), g'(a), g''(a)
-    double g = denom;
-    double g_prime = 3.0 * w0 * pba->Omega0_m * a_pow_3w0_minus_1;
-    double g_double_prime = 3.0 * w0 * (3.0 * w0 - 1.0) * pba->Omega0_m * a_pow_3w0_minus_2;
-
-    // Second derivative of the first term (f/g)
-    double d2_first_term = (
-        (f_double_prime * g - 2.0 * f_prime * g_prime + 2.0 * f * g_prime * g_prime / g - f * g_double_prime)
-    ) / denom_sq;
-
-    // Second term: Derivative of B(1 - a^{-3w0})
-    // Second derivative is: 3w0 (3w0 + 1) B a^{-3w0 - 2}
-    double d2_second_term = 3.0 * w0 * (3.0 * w0 + 1.0) * pba->Omega_EDE * a_pow_minus_3w0_minus_2;
-
     // Total second derivative
-    d2Omega_ede_over_da2 = d2_first_term + d2_second_term;
-    // Print the result with proper formatting
-    //printf("d²Ω_EDE/da² = %.8e\n", d2Omega_ede_over_da2);
-
+    d2Omega_ede_over_da2 = 0.0;
+    
     *dw_over_da_fld = - d2Omega_ede_over_da2*a/3./(1.-Omega_ede_a)/Omega_ede_a
       - dOmega_ede_over_da/3./(1.-Omega_ede_a)/Omega_ede_a
       + dOmega_ede_over_da*dOmega_ede_over_da*a/3./(1.-Omega_ede_a)/(1.-Omega_ede_a)/Omega_ede_a
