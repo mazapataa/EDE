@@ -48,7 +48,6 @@ COBAYA_INFO = {
     },
     "params": {
         # Sampling params (priors here are for Cobaya internal checks, 
-        # actual sampling volume is controlled by SAMPLING_PARAMS ranges above)
         "logA":      {"prior": {"min": 1.61, "max": 3.91}, "drop": True, "latex": r"\log(10^{10} A_\mathrm{s})"},
         "A_s":       {"value": "lambda logA: 1e-10*np.exp(logA)", "latex": "A_\mathrm{s}"},
         "n_s":       {"prior": {"min": 0.8, "max": 1.2}, "latex": "n_\mathrm{s}"},
