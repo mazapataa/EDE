@@ -1,0 +1,7 @@
+18:59:08 [ultranest] [DEBUG] ReactiveNestedSampler: dims=9+0, resume=False, log_dir=cpl_real_run/run1, backend=hdf5, vectorized=False, nbootstraps=30, ndraw=128..65536
+18:59:08 [ultranest] [INFO] Sampling 400 live points from prior ...
+18:59:20 [ultranest] [DEBUG] run_iter dlogz=0.5, dKL=0.5, frac_remain=0.01, Lepsilon=0.0010, min_ess=1000
+18:59:20 [ultranest] [DEBUG] max_iters=-1, max_ncalls=1000000, max_num_improvement_loops=5, min_num_live_points=400, cluster_num_live_points=40
+18:59:20 [ultranest] [DEBUG] minimal_widths_sequence: [(-inf, 400.0), (inf, 400.0)]
+18:59:20 [ultranest] [INFO] Explored until L=-9  
+18:59:20 [ultranest] [INFO] Likelihood function evaluations: 400
