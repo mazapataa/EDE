@@ -1,8 +1,8 @@
 import numpy as np
 CLASSY_PATH = "/Users/alfonsozapata/Documents/EDE_update/EDE/class_ede"
 
-OUTPUT_DIR = "cpl_output"
-RUN_NAME = "cpl_real_run"
+OUTPUT_DIR = "lcdm_output"
+RUN_NAME = "lcdm_real_run"
 
 # ==========================================
 # SAMPLING PARAMETERS
@@ -14,8 +14,8 @@ SAMPLING_PARAMS = {
     'omega_b':   {'label': r'\Omega_\mathrm{b} h^2',      'range': (0.022, 0.0226)},
     'omega_cdm': {'label': r'\Omega_\mathrm{c} h^2',      'range': (0.11, 0.13)},
     'm_ncdm':    {'label': r'm_\nu',                      'range': (0.0, 0.1)},
-    'w0_fld':    {'label': r'w_{0,\mathrm{DE}}',          'range': (-2.0, -0.5)},
-    'wa_fld':    {'label': r'w_{a,\mathrm{DE}}',      'range': (0.0, 0.1)},
+#    'w0_fld':    {'label': r'w_{0,\mathrm{DE}}',          'range': (-2.0, -0.5)},
+#    'wa_fld':    {'label': r'w_{a,\mathrm{DE}}',      'range': (0.0, 0.1)},
     'tau_reio':  {'label': r'\tau_\mathrm{reio}',         'range': (0.01, 0.08)}
 }
 
@@ -32,13 +32,13 @@ COBAYA_INFO = {
         "classy": {
             "path": CLASSY_PATH,
             "extra_args": {
-                "fluid_equation_of_state": "CLP",
-                "use_ppf": True,
+    #            "fluid_equation_of_state": "CLP",
+    #            "use_ppf": True,
                 "N_ncdm": 1,
-                "N_ur": 2.0328,
-                "deg_ncdm": 3.0,
-                "T_ncdm": 0.71611,
-                "tol_initial_Omega_r": 0.1
+                "N_ur": 2.0328
+   #             "deg_ncdm": 3.0,
+   #             "T_ncdm": 0.71611,
+   #             "tol_initial_Omega_r": 0.1
             }
         }
     },
@@ -55,8 +55,8 @@ COBAYA_INFO = {
         "omega_b":   {"prior": {"min": 0.005, "max": 0.1}, "latex": r"\Omega_\mathrm{b} h^2"},
         "omega_cdm": {"prior": {"min": 0.001, "max": 0.99}, "latex": r"\Omega_\mathrm{c} h^2"},
         "m_ncdm":    {"prior": {"min": 0, "max": 1.667}, "latex": r"m_\nu"},
-        "w0_fld":    {"prior": {"min": -3, "max": 1}, "latex": r"w_{0,\mathrm{DE}}"},
-        "wa_fld":    {"prior": {"min": -2.0, "max": 2.0}, "latex": r"\w_{a,\mathrm{DE}}"},
+  #      "w0_fld":    {"prior": {"min": -3, "max": 1}, "latex": r"w_{0,\mathrm{DE}}"},
+  #      "wa_fld":    {"prior": {"min": -2.0, "max": 2.0}, "latex": r"\w_{a,\mathrm{DE}}"},
         "tau_reio":  {"prior": {"min": 0.01, "max": 0.8}, "latex": r"\tau_\mathrm{reio}"},
         
         # Derived/Fixed

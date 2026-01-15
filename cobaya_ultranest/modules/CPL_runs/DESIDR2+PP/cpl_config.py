@@ -44,7 +44,7 @@ COBAYA_INFO = {
     },
     "likelihood": {
         "bao.desi_dr2": None,
-        #"sn.pantheonplus": None
+        "sn.pantheonplus": None
     },
     "params": {
         # Sampling params (priors here are for Cobaya internal checks, 
