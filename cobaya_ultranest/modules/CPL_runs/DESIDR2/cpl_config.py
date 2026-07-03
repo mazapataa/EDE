@@ -15,7 +15,7 @@ SAMPLING_PARAMS = {
     'omega_cdm': {'label': r'\Omega_\mathrm{c} h^2',      'range': (0.11, 0.13)},
     'm_ncdm':    {'label': r'm_\nu',                      'range': (0.0, 0.1)},
     'w0_fld':    {'label': r'w_{0,\mathrm{DE}}',          'range': (-2.0, -0.5)},
-    'wa_fld':    {'label': r'w_{a,\mathrm{DE}}',      'range': (0.0, 0.1)},
+    'wa_fld':    {'label': r'w_{a,\mathrm{DE}}',      'range': (-2.0, 2.0)},
     'tau_reio':  {'label': r'\tau_\mathrm{reio}',         'range': (0.01, 0.08)}
 }
 
