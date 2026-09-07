@@ -112,16 +112,6 @@ More details on the wrapper and its compilation are found on the wiki page:
 
 https://github.com/lesgourg/class_public/wiki
 
-### Plotting utility
-
-Since version 2.3, the package includes an improved plotting script called
-`CPU.py` (Class Plotting Utility), written by Benjamin Audren and Jesus
-Torrado. It can plot the $C_\ell$'s, the $P(k)$, or any other CLASS output,
-for one or several models, as well as their ratio or percentage difference.
-The syntax and list of available options are obtained by typing
-`python CPU.py -h`. There is a similar script for MATLAB, written by Thomas
-Tram. To use it, once in MATLAB, type `help plot_CLASS_output.m`.
-
 ### Developing the code
 
 If you want to develop the code further, we suggest downloading the
