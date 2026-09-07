@@ -1,120 +1,165 @@
-CLASS: Cosmic Linear Anisotropy Solving System  {#mainpage}
-==============================================
+# CLASS with Early Dark Energy: EDE fork {#mainpage}
 
-Authors: Julien Lesgourgues, Thomas Tram, Nils Schoeneberg
+This repository is a modified version of the public Boltzmann code **CLASS**
+(Cosmic Linear Anisotropy Solving System), extended to implement a unified,
+parametrized **Early Dark Energy (EDE)** fluid and a **Chevallier–Polarski–Linder
+(CPL)** late-time dark energy equation of state. The modifications were
+developed to compute the background and perturbation evolution of these
+extended dark energy models for a systematic Bayesian comparison against
+$\Lambda$CDM, combining DESI DR2 BAO, Pantheon+ Type Ia supernovae, and
+*Planck* 2018 CMB data.
 
-with several major inputs from other people, especially Benjamin
-Audren, Simon Prunet, Jesus Torrado, Miguel Zumalacarregui, Francesco
-Montanari, Deanna Hooper, Samuel Brieden, Daniel Meinert, Matteo Lucca, etc.
+Full details of the model, methodology, and results are presented in:
 
-For download and information, see http://class-code.net
+**"Early against Late: A contrast on dark energy in the light of DESI DR2"**
+Miguel A. Zapata, Karim Carrion, and Gabriela Garcia-Arroyo
+[arXiv:2609.05410](https://arxiv.org/pdf/2609.05410)
 
+**Authors of this code:**
+- [Miguel A. Zapata](https://arxiv.org/search/astro-ph?searchtype=author&query=Zapata,+M+A)
+- [Karim Carrion](https://arxiv.org/search/astro-ph?searchtype=author&query=Carrion,+K)
+- [Gabriela Garcia-Arroyo](https://arxiv.org/search/astro-ph?searchtype=author&query=Garcia-Arroyo,+G)
 
-Compiling CLASS and getting started
------------------------------------
+If you use this code in a publication, please cite the paper above **in
+addition to** the fundamental CLASS papers listed below, following the
+standard CLASS citation policy.
 
-(the information below can also be found on the webpage, just below
-the download button)
+---
 
-Download the code from the webpage and unpack the archive (tar -zxvf
-class_vx.y.z.tar.gz), or clone it from
-https://github.com/lesgourg/class_public. Go to the class directory
-(cd class/ or class_public/ or class_vx.y.z/) and compile (make clean;
-make class). You can usually speed up compilation with the option -j:
-make -j class. If the first compilation attempt fails, you may need to
-open the Makefile and adapt the name of the compiler (default: gcc),
-of the optimization flag (default: -O4 -ffast-math) and of the OpenMP
-flag (default: -fopenmp; this flag is facultative, you are free to
-compile without OpenMP if you don't want parallel execution; note that
-you need the version 4.2 or higher of gcc to be able to compile with
--fopenmp). Many more details on the CLASS compilation are given on the
-wiki page
+## About the model
+
+The unified EDE fluid tracks the equation of state of the dominant matter
+component of the universe at early times, behaving like radiation during
+radiation domination and like matter during matter domination, while
+maintaining a non-negligible fractional density before transitioning to
+drive late-time cosmic acceleration. It is controlled by two additional
+free parameters, `w0_fld` and `Omega_EDE`, on top of the standard
+cosmological parameters. The CPL parametrization is implemented as a
+late-time counterpart, controlled by `w0_fld` and `wa_fld`, and is used
+throughout the paper as a benchmark against which the early-time modification
+is contrasted. Both models rely on the Parametrized Post-Friedmann (PPF)
+scheme already present in CLASS to handle the phantom-divide crossing
+($w_{\rm de}=-1$) consistently at the perturbation level.
+
+---
+
+## Original CLASS documentation
+
+The sections below reproduce the standard CLASS documentation. Compilation,
+usage, and the Python wrapper work exactly as in the public CLASS release;
+no additional installation steps are required for the EDE and CPL
+extensions beyond the modified source files already included in this
+repository.
+
+### Compiling CLASS and getting started
+
+(the information below can also be found on the webpage, just below the
+download button)
+
+Download the code from the webpage and unpack the archive
+(`tar -zxvf class_vx.y.z.tar.gz`), or clone this repository directly. Go to
+the class directory (`cd class/` or `class_public/` or `class_vx.y.z/`) and
+compile (`make clean; make class`). You can usually speed up compilation
+with the `-j` option: `make -j class`. If the first compilation attempt
+fails, you may need to open the Makefile and adapt the name of the compiler
+(default: `gcc`), the optimization flag (default: `-O4 -ffast-math`), and
+the OpenMP flag (default: `-fopenmp`; this flag is optional, you are free to
+compile without OpenMP if you don't want parallel execution; note that you
+need version 4.2 or higher of `gcc` to compile with `-fopenmp`). Many more
+details on CLASS compilation are given on the wiki page:
 
 https://github.com/lesgourg/class_public/wiki/Installation
 
-(in particular, for compiling on Mac >= 10.9 despite of the clang
+(in particular, for compiling on Mac >= 10.9 despite the clang
 incompatibility with OpenMP).
 
-To check that the code runs, type:
+To check that the code runs, type: ./class explanatory.ini
 
-    ./class explanatory.ini
 
-The explanatory.ini file is THE reference input file, containing and
-explaining the use of all possible input parameters. We recommend to
-read it, to keep it unchanged (for future reference), and to create
-for your own purposes some shorter input files, containing only the
-input lines which are useful for you. Input files must have a *.ini
-extension. We provide an example of an input file containing a
-selection of the most used parameters, default.ini, that you may use as a
-starting point.
+The `explanatory.ini` file is *the* reference input file, containing and
+explaining the use of all possible input parameters. We recommend reading
+it, keeping it unchanged (for future reference), and creating your own
+shorter input files for your own purposes, containing only the input lines
+useful to you. Input files must have a `.ini` extension. We provide an
+example input file containing a selection of the most-used parameters,
+`default.ini`, that you may use as a starting point.
 
-If you want to play with the precision/speed of the code, you can use
-one of the provided precision files (e.g. cl_permille.pre) or modify
-one of them, and run with two input files, for instance:
+If you want to play with the precision/speed of the code, you can use one
+of the provided precision files (e.g., `cl_permille.pre`) or modify one of
+them, and run with two input files, for instance:./class test.ini cl_permille.pre
 
-    ./class test.ini cl_permille.pre
 
-The files *.pre are suppposed to specify the precision parameters for
-which you don't want to keep default values. If you find it more
-convenient, you can pass these precision parameter values in your *.ini
-file instead of an additional *.pre file.
+The `*.pre` files are meant to specify the precision parameters for which
+you don't want to keep default values. If you find it more convenient, you
+can pass these precision parameter values in your `*.ini` file instead of
+an additional `*.pre` file.
 
-The automatically-generated documentation is located in
+The automatically generated documentation is located in:
+doc/manual/html/index.html
+doc/manual/CLASS_manual.pdf
 
-    doc/manual/html/index.html
-    doc/manual/CLASS_manual.pdf
 
-On top of that, if you wish to modify the code, you will find lots of
-comments directly in the files.
+On top of that, if you wish to modify the code, you will find plenty of
+comments directly in the source files.
 
-Python
-------
+### Python
 
-To use CLASS from python, or ipython notebooks, or from the Monte
-Python parameter extraction code, you need to compile not only the
-code, but also its python wrapper. This can be done by typing just
-'make' instead of 'make class' (or for speeding up: 'make -j'). More
-details on the wrapper and its compilation are found on the wiki page
+To use CLASS from Python, IPython notebooks, or from a Monte Carlo
+parameter-extraction code such as MontePython or Cobaya, you need to compile
+not only the code, but also its Python wrapper. This can be done by typing
+just `make` instead of `make class` (or, to speed things up, `make -j`).
+More details on the wrapper and its compilation are found on the wiki page:
 
 https://github.com/lesgourg/class_public/wiki
 
-Plotting utility
-----------------
+### Plotting utility
 
-Since version 2.3, the package includes an improved plotting script
-called CPU.py (Class Plotting Utility), written by Benjamin Audren and
-Jesus Torrado. It can plot the Cl's, the P(k) or any other CLASS
-output, for one or several models, as well as their ratio or percentage
-difference. The syntax and list of available options is obtained by
-typing 'pyhton CPU.py -h'. There is a similar script for MATLAB,
-written by Thomas Tram. To use it, once in MATLAB, type 'help
-plot_CLASS_output.m'
+Since version 2.3, the package includes an improved plotting script called
+`CPU.py` (Class Plotting Utility), written by Benjamin Audren and Jesus
+Torrado. It can plot the $C_\ell$'s, the $P(k)$, or any other CLASS output,
+for one or several models, as well as their ratio or percentage difference.
+The syntax and list of available options are obtained by typing
+`python CPU.py -h`. There is a similar script for MATLAB, written by Thomas
+Tram. To use it, once in MATLAB, type `help plot_CLASS_output.m`.
 
-Developing the code
---------------------
+### Developing the code
 
-If you want to develop the code, we suggest that you download it from
-the github webpage
+If you want to develop the code further, we suggest downloading the
+original public version from the GitHub webpage:
 
 https://github.com/lesgourg/class_public
 
-rather than from class-code.net. Then you will enjoy all the feature
-of git repositories. You can even develop your own branch and get it
-merged to the public distribution. For related instructions, check
+rather than from class-code.net. This way, you will have access to all the
+features of git repositories, and can develop your own branch. For related
+instructions, check:
 
 https://github.com/lesgourg/class_public/wiki/Public-Contributing
 
-Using the code
---------------
+---
 
-You can use CLASS freely, provided that in your publications, you cite
-at least the paper `CLASS II: Approximation schemes <http://arxiv.org/abs/1104.2933>`. Feel free to cite more CLASS papers!
+## Citing this code
 
-Support
--------
+You are free to use this code, provided that in your publications you cite,
+at minimum, the fork-specific paper above **and** the following fundamental
+CLASS papers, in line with the official CLASS citation policy (feel free to
+cite more CLASS papers if relevant to your use case):
 
-To get support, please open a new issue on the
+- D. Blas, J. Lesgourgues, and T. Tram, *"The Cosmic Linear Anisotropy
+  Solving System (CLASS) II: Approximation schemes,"* JCAP **07** (2011) 034,
+  [arXiv:1104.2933](https://arxiv.org/abs/1104.2933)
+- J. Lesgourgues, *"The Cosmic Linear Anisotropy Solving System (CLASS) I:
+  Overview,"* [arXiv:1104.2932](https://arxiv.org/abs/1104.2932)
+- J. Lesgourgues, *"The Cosmic Linear Anisotropy Solving System (CLASS) III:
+  Comparison with CAMB for $\Lambda$CDM,"*
+  [arXiv:1104.2934](https://arxiv.org/abs/1104.2934)
+- J. Lesgourgues and T. Tram, *"The Cosmic Linear Anisotropy Solving System
+  (CLASS) IV: Efficient implementation of non-cold relics,"*
+  [arXiv:1104.2935](https://arxiv.org/abs/1104.2935)
+
+## Support
+
+For questions specific to the EDE and CPL extensions implemented in this
+fork, please open an issue on this repository. For general CLASS support,
+please open a new issue on the main CLASS webpage:
 
 https://github.com/lesgourg/class_public
-
-webpage!
