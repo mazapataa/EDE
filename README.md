@@ -1,4 +1,4 @@
-# CLASS with Early Dark Energy: EDE fork {#mainpage}
+# CLASS with Early Dark Energy parametrization
 
 This repository is a modified version of the public Boltzmann code **CLASS**
 (Cosmic Linear Anisotropy Solving System), extended to implement a unified,
